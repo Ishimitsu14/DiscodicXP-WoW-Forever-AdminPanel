@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DiscodicXP — управление</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div id="notice" role="status" aria-live="polite" hidden></div>
+  <main id="login-view" class="login-shell">
+    <form id="login-form" class="login-card">
+      <span class="brand-symbol" aria-hidden="true">D</span>
+      <p class="eyebrow">DISCODICXP / FOREVER</p>
+      <h1>Всё на своём месте.</h1>
+      <p class="muted">Аккаунты, персонажи и прогресс вашего аддона.</p>
+      <label>Логин<input name="login" autocomplete="username" required maxlength="64"></label>
+      <label>Пароль<input name="password" type="password" autocomplete="current-password" required maxlength="512"></label>
+      <button class="primary" type="submit">Войти в панель <span aria-hidden="true">→</span></button>
+      <p class="login-foot">Доступ только для администратора</p>
+      <a class="launcher-download" href="/downloads/DiscodicXP.Launcher.exe">Скачать лаунчер для Windows ↓</a>
+    </form>
+  </main>
+  <div id="app-view" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="DiscodicXP"><span class="brand-symbol">D</span><span>DiscodicXP<small>FOREVER · ADMIN</small></span></a>
+      <p class="nav-label">УПРАВЛЕНИЕ</p>
+      <nav aria-label="Разделы панели">
+        <button class="nav-item active" data-view="characters"><span aria-hidden="true">♙</span>Персонажи</button>
+        <button class="nav-item" data-view="accounts"><span aria-hidden="true">◎</span>Аккаунты</button>
+        <button class="nav-item" data-view="devices"><span aria-hidden="true">▣</span>Компьютеры</button>
+        <button class="nav-item" data-view="guides"><span aria-hidden="true">▤</span>Гайды</button>
+        <button class="nav-item" data-view="events"><span aria-hidden="true">↺</span>Журнал</button>
+      </nav>
+      <div class="sidebar-bottom"><span class="status-dot"></span>Сервер подключён<p>Прогресс следует за игроком.</p><a class="launcher-download" href="/downloads/DiscodicXP.Launcher.exe">Скачать лаунчер Windows ↓</a><button id="logout" class="text-button">Выйти из панели ↗</button></div>
+    </aside>
+    <main class="workspace">
+      <header class="topbar"><span>Рабочее пространство <span class="divider">/</span> <strong id="breadcrumb">Персонажи</strong></span><span class="admin-badge"><span class="avatar">A</span><span id="admin-name">Администратор</span><button id="top-logout" class="text-button" aria-label="Выйти" title="Выйти">↗</button></span></header>
+      <div class="page-content">
+        <div class="page-heading"><div><p class="eyebrow">DISCODICXP CLOUD</p><h1 id="page-title">Персонажи</h1><p id="page-description" class="muted">Сохранённые маршруты и прогресс со всех компьютеров.</p></div><button id="create" class="primary">+ Добавить аккаунт</button></div>
+        <section class="stats" aria-label="Статистика">
+          <article class="stat"><span>Аккаунты</span><strong id="stat-accounts">0</strong><small>BattleTag в системе</small></article>
+          <article class="stat"><span>Персонажи</span><strong id="stat-characters">0</strong><small>С облачным сохранением</small></article>
+          <article class="stat"><span>Компьютеры</span><strong id="stat-devices">0</strong><small>С активным доступом</small></article>
+          <article class="stat accent-stat"><span>Хранение истории</span><strong>20 <em>версий</em></strong><small>Для каждого персонажа</small></article>
+        </section>
+        <section class="data-panel">
+          <div class="panel-toolbar"><div><h2 id="list-title">Все персонажи</h2><span id="result-count" class="muted"></span></div><div class="table-actions"><label class="search-label"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Поиск по имени, серверу, BattleTag…" aria-label="Поиск"></label><button id="refresh" class="secondary" aria-label="Обновить данные">↻</button></div></div>
+          <div class="table-wrap"><table><thead id="table-head"></thead><tbody id="table-body"></tbody></table></div>
+          <div id="empty" class="empty" hidden><span class="empty-icon" aria-hidden="true">◇</span><h3 id="empty-title">Пока нет персонажей</h3><p id="empty-description">Создайте аккаунт, выдайте ключ компьютера и отправьте первое сохранение через лаунчер.</p></div>
+          <div class="panel-footer"><span class="status-dot"></span><span>Данные обновляются по запросу</span><span id="updated-at"></span></div>
+        </section>
+        <div class="help-note"><span aria-hidden="true">↔</span><p><strong>Один персонаж. Любой компьютер.</strong><br>Игрок закрывает WoW и сохраняет прогресс в лаунчере. На другом компьютере — загружает его перед игрой.</p></div>
+      </div>
+    </main>
+  </div>
+  <dialog id="account-dialog"><form id="account-form"><div class="dialog-heading"><h2>Новый аккаунт</h2><button type="button" class="close" data-close aria-label="Закрыть">×</button></div><p class="muted">BattleTag помогает узнать игрока. Доступ выдаётся ключом компьютера.</p><label>BattleTag<input name="battleTag" placeholder="Player#1234" required maxlength="128"></label><button class="primary" type="submit">Создать аккаунт</button></form></dialog>
+  <dialog id="device-dialog"><form id="device-form"><div class="dialog-heading"><h2>Подключить компьютер</h2><button type="button" class="close" data-close aria-label="Закрыть">×</button></div><label>Аккаунт<select id="device-account" name="accountId" required></select></label><label>Название компьютера<input name="name" placeholder="Домашний компьютер" required maxlength="64"></label><button class="primary" type="submit">Создать ключ</button></form></dialog>
+  <dialog id="key-dialog"><div class="dialog-heading"><h2>Ключ готов</h2><button type="button" class="close" data-close aria-label="Закрыть">×</button></div><p class="muted">Ключ показывается один раз. Передайте его владельцу компьютера для подключения лаунчера.</p><label>Ключ компьютера<input id="device-secret" readonly autocomplete="off"></label><button id="copy-key" class="primary">Скопировать ключ</button></dialog>
+  <dialog id="history-dialog"><div class="dialog-heading"><h2>История сохранений</h2><button type="button" class="close" data-close aria-label="Закрыть">×</button></div><p class="muted">Последние 20 версий. В лаунчере загружается актуальная.</p><ol id="history-list" class="history-list"></ol></dialog>
+  <dialog id="guide-dialog"><form id="guide-form"><div class="dialog-heading"><h2>Загрузить гайд</h2><button type="button" class="close" data-close aria-label="Закрыть">×</button></div><p class="muted">Файл заменит комплект маршрутов для всех подключённых компьютеров. Прогресс персонажей сохранится.</p><label>Исходный файл .txt<input id="guide-file" type="file" accept=".txt,text/plain" required></label><p class="muted">Сохраните исходное имя файла. До 16 МиБ. После публикации нажмите «Обновить гайды» в лаунчере и выполните /reload в игре.</p><button class="primary" type="submit">Загрузить и опубликовать</button></form></dialog>
+</body>
+</html>
