@@ -42,6 +42,19 @@ test('guide uploads decode encrypted files, preserve text, and reject broken or 
   }
 });
 
+test('guide variants with the same name retain their header conditions while true duplicates are rejected', () => {
+  const horde = source().replace('#forever\n', '#forever\n<< Horde\n');
+  const variants = [horde, horde.replace('<< Horde', '<< Horde Mage'), horde.replace('<< Horde', '<< Horde skip')];
+  const pack = prepareGuides(container(variants));
+  assert.equal(pack.sectionCount, variants.length);
+  assert.deepEqual(JSON.parse(pack.content).guides, variants.map(value => value.replaceAll('RestedXP', 'DiscodicXP')));
+  for (const guides of [[horde, horde.replace('Тест 1', 'Изменено')],
+    [horde, horde.replace('<< Horde', '  << Horde  ').replaceAll('\n', '\r\n')],
+    [source(), source().replace('step\n', 'step\n<< Mage\n')]]) {
+    assert.throws(() => prepareGuides(container(guides)), { status: 400, message: 'invalid_guide' });
+  }
+});
+
 test('guide revisions persist, unchanged uploads are idempotent, and history retains 20 versions', async t => {
   const root = await mkdtemp(resolve(tmpdir(), 'dxp-guides-'));
   t.after(() => rm(root, { recursive: true, force: true }));

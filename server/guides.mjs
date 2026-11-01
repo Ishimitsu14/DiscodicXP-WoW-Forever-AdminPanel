@@ -71,9 +71,11 @@ export function prepareGuides(input) {
     const value = source.replaceAll('\r\n', '\n').replaceAll('RXPGuides', 'DiscodicXP').replaceAll('RXPG', 'DXPG')
       .replaceAll('RXP', 'DXP').replaceAll('rxpguides', 'discodicxp').replaceAll('rxpg', 'dxpg').replaceAll('rxp', 'dxp').replaceAll('RestedXP', 'DiscodicXP');
     const name = value.match(/^#name\s+([^\r\n]+)/m)?.[1]?.trim(), group = value.match(/^#group\s+([^\r\n]+)/m)?.[1]?.trim();
+    const enabledFor = value.split(/^\s*step(?:\s|$)/m, 1)[0].match(/^\s*<<[ \t]*([^\r\n]*)/m)?.[1]?.trim() || '';
+    const key = `${group}||${name}||${enabledFor}`;
     if (!name || !group || !/^\s*step(?:\s|$)/m.test(value) || !/^#forever\s*$/im.test(value)
-      || /\0|^\s*#\S+\s*=/m.test(value) || seen.has(`${group}||${name}`)) throw new ApiError(400, 'invalid_guide');
-    seen.add(`${group}||${name}`);
+      || /\0|^\s*#\S+\s*=/m.test(value) || seen.has(key)) throw new ApiError(400, 'invalid_guide');
+    seen.add(key);
     return value;
   });
   const content = JSON.stringify({ schemaVersion: 1, guides });
