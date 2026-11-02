@@ -53,6 +53,32 @@ test('parallel checks download once and store an immutable verified package', as
   assert.equal(JSON.stringify(results).includes('github_secret'), false);
 });
 
+test('public releases and packages update without a GitHub token', async t => {
+  const { store, calls } = await fixture(t, { githubToken: '' });
+  assert.equal((await store.latest()).sha256, sha256);
+  assert.equal(calls.length, 2);
+  assert.ok(calls.every(call => call.init.headers.Authorization === undefined));
+});
+
+test('an invalid GitHub token falls back to anonymous public release access', async t => {
+  const calls = [];
+  const { store } = await fixture(t, { fetchImpl: async (url, init) => {
+    calls.push({ url, init });
+    if (init.headers.Authorization) return new Response(null, { status: 401 });
+    return url.endsWith('/releases/latest') ? Response.json(release()) : new Response(packageBytes);
+  } });
+  assert.equal((await store.latest()).sha256, sha256);
+  assert.equal(calls.length, 4);
+  assert.deepEqual(calls.map(call => call.init.headers.Authorization),
+    ['Bearer github_secret', undefined, 'Bearer github_secret', undefined]);
+});
+
+test('anonymous fallback cannot read unavailable private releases', async t => {
+  const { store } = await fixture(t, { fetchImpl: async (_url, init) =>
+    new Response(null, { status: init.headers.Authorization ? 401 : 404 }) });
+  await assert.rejects(store.latest());
+});
+
 test('corrupt and interrupted updates preserve the previous release', async t => {
   const { root, store, state } = await fixture(t);
   const first = await store.latest();
@@ -71,10 +97,11 @@ test('cold failure is throttled and verified disk cache survives a restart', asy
   await assert.rejects(store.latest());
   state.fail = false;
   const previous = await store.latest();
-  const restored = new ReleaseStore({ repository: 'owner/private-addon', githubToken: '', cachePath: root });
+  const unavailable = async () => { throw new Error('offline'); };
+  const restored = new ReleaseStore({ repository: 'owner/private-addon', githubToken: '', cachePath: root, fetchImpl: unavailable });
   assert.deepEqual(await restored.latest(), previous);
   await writeFile(resolve(root, `${sha256}.zip`), 'corrupt disk file');
-  const damaged = new ReleaseStore({ repository: 'owner/private-addon', githubToken: '', cachePath: root, refreshMs: 60_000 });
+  const damaged = new ReleaseStore({ repository: 'owner/private-addon', githubToken: '', cachePath: root, refreshMs: 60_000, fetchImpl: unavailable });
   await assert.rejects(damaged.latest());
   await assert.rejects(damaged.latest());
 });

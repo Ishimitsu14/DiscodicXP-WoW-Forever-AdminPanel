@@ -37,6 +37,7 @@ export class ReleaseStore {
 
   async request(url, binary = false) {
     let target = new URL(url);
+    let useToken = Boolean(this.githubToken);
     for (let attempt = 0; attempt < 4; attempt++) {
       const isApi = target.hostname === 'api.github.com';
       if (target.protocol !== 'https:' || target.port || target.username || target.password
@@ -45,10 +46,15 @@ export class ReleaseStore {
       }
       const headers = { Accept: binary ? 'application/octet-stream' : 'application/vnd.github+json',
         'User-Agent': 'DiscodicXP-Update-Service', 'X-GitHub-Api-Version': '2022-11-28' };
-      if (isApi) headers.Authorization = `Bearer ${this.githubToken}`;
+      if (isApi && useToken) headers.Authorization = `Bearer ${this.githubToken}`;
       const response = await this.fetchImpl(target.href, {
         headers, redirect: 'manual', signal: AbortSignal.timeout(binary ? 120_000 : 20_000),
       });
+      if (response.status === 401 && isApi && useToken) {
+        await response.body?.cancel();
+        useToken = false;
+        continue;
+      }
       if ([301, 302, 303, 307, 308].includes(response.status)) {
         await response.body?.cancel();
         const location = response.headers.get('location');
@@ -121,7 +127,6 @@ export class ReleaseStore {
       await this.restore();
       this.restored = true;
     }
-    if (!this.githubToken) throw new Error('GitHub access is not configured.');
     const response = await this.request(`https://api.github.com/repos/${this.repository}/releases/latest`);
     const info = selectPackage(await response.json(), this.maxBytes);
     await this.download(info);
