@@ -140,7 +140,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const port = Number(process.env.PORT || 8787);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT.');
   const db = new Database(process.env.DATABASE_PATH || 'data/discodicxp.sqlite');
-  const store = new ReleaseStore({ repository: process.env.GITHUB_REPOSITORY || 'Ishimitsu14/DiscodicXP-WoW-Forever',
+  const store = new ReleaseStore({ repository: process.env.GITHUB_REPOSITORY || 'Ishimitsu14/DiscordicXP-WoW-Forever',
     githubToken: process.env.GITHUB_TOKEN, cachePath: process.env.CACHE_PATH || 'data/cache', report: code => console.error(code) });
   const server = createPlatform({ db, store, keysPath: process.env.DEVICE_KEYS_PATH,
     origin: process.env.PUBLIC_ORIGIN || `http://127.0.0.1:${port}` });

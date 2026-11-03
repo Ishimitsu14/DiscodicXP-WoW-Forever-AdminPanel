@@ -73,7 +73,7 @@ export function createUpdateServer({ store, keysPath, maxDownloads = 3, route, a
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const port = Number(process.env.PORT || 8787);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT.');
-  const store = new ReleaseStore({ repository: process.env.GITHUB_REPOSITORY || 'Ishimitsu14/DiscodicXP-WoW-Forever',
+  const store = new ReleaseStore({ repository: process.env.GITHUB_REPOSITORY || 'Ishimitsu14/DiscordicXP-WoW-Forever',
     githubToken: process.env.GITHUB_TOKEN, cachePath: process.env.CACHE_PATH || '/var/lib/discodicxp/cache',
     report: code => console.error(code) });
   const server = createUpdateServer({ store,
