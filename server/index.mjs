@@ -144,6 +144,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     githubToken: process.env.GITHUB_TOKEN, cachePath: process.env.CACHE_PATH || 'data/cache', report: code => console.error(code) });
   const server = createPlatform({ db, store, keysPath: process.env.DEVICE_KEYS_PATH,
     origin: process.env.PUBLIC_ORIGIN || `http://127.0.0.1:${port}` });
-  server.listen(port, '127.0.0.1', () => console.log(`DiscodicXP admin: http://127.0.0.1:${port}`));
+  server.listen(port, '127.0.0.1', () => console.log(`DiscordicXP admin: http://127.0.0.1:${port}`));
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => { db.close(); process.exit(0); }));
 }

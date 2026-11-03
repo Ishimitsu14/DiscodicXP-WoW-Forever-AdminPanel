@@ -28,7 +28,7 @@ if [[ "$(sha256sum -- "$temporary" | cut -d ' ' -f 1)" != "$expected_sha" ]]; th
 fi
 install -m 644 "$temporary" "$immutable_temporary"
 printf '{"version":"%s","sha256":"%s","size":%s,"downloadPath":"/downloads/launcher/%s.exe"}\n' "$version" "$actual_sha" "$size" "$actual_sha" > "$manifest_temporary"
-printf '%s  DiscodicXP.Launcher.exe\n' "$actual_sha" > "$checksum_temporary"
+printf '%s  DiscordicXP.Launcher.exe\n' "$actual_sha" > "$checksum_temporary"
 chmod 644 "$checksum_temporary" "$manifest_temporary"
 mv -f -- "$immutable_temporary" "$download_root/launcher/$actual_sha.exe"
 mv -f -- "$temporary" "$download_root/DiscodicXP.Launcher.exe"

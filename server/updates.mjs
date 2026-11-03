@@ -56,7 +56,7 @@ export function createUpdateServer({ store, keysPath, maxDownloads = 3, route, a
       activeDownloads++;
       try {
         response.writeHead(200, { 'Content-Type': 'application/zip', 'Content-Length': size,
-          'Content-Disposition': 'attachment; filename="DiscodicXP.zip"' });
+          'Content-Disposition': 'attachment; filename="DiscordicXP.zip"' });
         await pipeline(createReadStream(path), response);
       } finally { activeDownloads--; }
     } catch {

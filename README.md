@@ -1,8 +1,8 @@
-# DiscodicXP · Admin
+# DiscordicXP · Admin
 
-Админка, API прогресса и сервер обновлений Windows-лаунчера DiscodicXP.
+Админка, API прогресса и сервер обновлений Windows-лаунчера DiscordicXP.
 Клиентская часть — аддон и лаунчер — хранится отдельно:
-[DiscodicXP-WoW-Forever](https://github.com/Ishimitsu14/DiscodicXP-WoW-Forever).
+[DiscordicXP-WoW-Forever](https://github.com/Ishimitsu14/DiscordicXP-WoW-Forever).
 
 Node.js 22.14+, SQLite, обычные ES modules. Веб-интерфейс на HTML/CSS/JavaScript
 без отдельной сборки. SQLite доступен через встроенный `node:sqlite`; в Node 22
@@ -82,7 +82,7 @@ sudo bash server/deploy.sh ishimitsu.kk.fvds.ru nginx
 В этом режиме создаётся только `/etc/nginx/conf.d/discodicxp.conf`, выпускается
 сертификат Let's Encrypt через Certbot и включается автоматическое продление.
 Конфигурация проверяется перед reload; при ошибке настройки возвращается прежний
-конфиг DiscodicXP. Другие конфиги nginx не перезаписываются.
+конфиг DiscordicXP. Другие конфиги nginx не перезаписываются.
 
 Можно работать по IP без домена:
 
@@ -211,7 +211,7 @@ Forever и открытый текст одного маршрута с `#foreve
 Старые ключи из реестра без аккаунта для гайдов не подходят.
 
 При обновлении существующего nginx увеличьте `client_max_body_size` с `4m`
-до `32m` в конфигурации DiscodicXP и проверьте конфигурацию перед reload.
+до `32m` в конфигурации DiscordicXP и проверьте конфигурацию перед reload.
 Новые установки используют этот лимит из скриптов развёртывания.
 
 ## Проверки

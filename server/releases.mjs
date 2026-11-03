@@ -9,7 +9,7 @@ const versionPattern = /^v?(\d+\.\d+\.\d+)$/;
 export function selectPackage(release, maxBytes) {
   const version = release.tag_name?.match(versionPattern)?.[1];
   if (!version || release.draft || release.prerelease) throw new Error('Unsupported release.');
-  const assets = release.assets?.filter(asset => asset.name === `DiscodicXP-${version}-personal.zip`);
+  const assets = release.assets?.filter(asset => [`DiscordicXP-${version}-personal.zip`, `DiscodicXP-${version}-personal.zip`].includes(asset.name));
   if (assets?.length !== 1) throw new Error('Expected one addon package.');
   const asset = assets[0];
   const sha256 = asset.digest?.replace(/^sha256:/, '');
@@ -45,7 +45,7 @@ export class ReleaseStore {
         throw new Error('Unexpected GitHub download host.');
       }
       const headers = { Accept: binary ? 'application/octet-stream' : 'application/vnd.github+json',
-        'User-Agent': 'DiscodicXP-Update-Service', 'X-GitHub-Api-Version': '2022-11-28' };
+        'User-Agent': 'DiscordicXP-Update-Service', 'X-GitHub-Api-Version': '2022-11-28' };
       if (isApi && useToken) headers.Authorization = `Bearer ${this.githubToken}`;
       const response = await this.fetchImpl(target.href, {
         headers, redirect: 'manual', signal: AbortSignal.timeout(binary ? 120_000 : 20_000),
@@ -58,7 +58,7 @@ export class ReleaseStore {
       if ([301, 302, 303, 307, 308].includes(response.status)) {
         await response.body?.cancel();
         const location = response.headers.get('location');
-        if (!binary || !location) throw new Error('Unexpected GitHub redirect.');
+        if (!location || (!binary && new URL(location, target).hostname !== 'api.github.com')) throw new Error('Unexpected GitHub redirect.');
         target = new URL(location, target);
         continue;
       }

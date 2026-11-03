@@ -31,5 +31,6 @@ test('launcher publication keeps immutable binaries and switches the manifest af
   assert.deepEqual(await readFile(resolve(output, 'launcher', hash(first) + '.exe')), first);
   assert.deepEqual(await readFile(resolve(output, 'launcher', hash(second) + '.exe')), second);
   assert.deepEqual(await readFile(resolve(output, 'DiscodicXP.Launcher.exe')), second);
+  assert.equal(await readFile(resolve(output, 'DiscodicXP.Launcher.exe.sha256'), 'utf8'), `${hash(second)}  DiscordicXP.Launcher.exe\n`);
   assert.equal((await manifest()).sha256, hash(second));
 });

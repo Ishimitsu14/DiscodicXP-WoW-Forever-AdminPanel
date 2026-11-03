@@ -84,7 +84,7 @@ chown root:discodicxp-update /etc/discodicxp/devices.json
 chmod 640 /etc/discodicxp/devices.json
 if [[ ! -f /etc/discodicxp/service.env ]]; then
     cat > /etc/discodicxp/service.env <<'CONFIG'
-GITHUB_REPOSITORY=Ishimitsu14/DiscodicXP-WoW-Forever
+GITHUB_REPOSITORY=Ishimitsu14/DiscordicXP-WoW-Forever
 GITHUB_TOKEN=
 PORT=8787
 CACHE_PATH=/var/lib/discodicxp/cache

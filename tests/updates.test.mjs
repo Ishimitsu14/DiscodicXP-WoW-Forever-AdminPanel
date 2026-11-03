@@ -32,6 +32,10 @@ async function fixture(t, options = {}) {
 
 test('only the matching full release with a trustworthy checksum can be installed', () => {
   assert.equal(selectPackage(release(), 1024).version, '0.3.1');
+  const renamed = release();
+  renamed.assets[0].name = 'DiscordicXP-0.3.1-personal.zip';
+  assert.equal(selectPackage(renamed, 1024).version, '0.3.1');
+  assert.throws(() => selectPackage({ ...renamed, assets: [...renamed.assets, release().assets[0]] }, 1024));
   for (const invalid of [
     { ...release(), draft: true }, { ...release(), prerelease: true },
     { ...release(), tag_name: 'launcher-v1.0.0' },
@@ -41,6 +45,22 @@ test('only the matching full release with a trustworthy checksum can be installe
     { ...release(), assets: [{ ...release().assets[0], name: 'source.zip' }] },
   ]) assert.throws(() => selectPackage(invalid, 1024));
   assert.throws(() => selectPackage(release(), 2));
+});
+
+test('renamed repository redirects remain on the GitHub API without exposing credentials', async t => {
+  const { store } = await fixture(t);
+  const calls = [];
+  store.fetchImpl = async (url, init) => {
+    calls.push({ url, init });
+    return calls.length === 1
+      ? new Response(null, { status: 301, headers: { Location: 'https://api.github.com/repos/owner/renamed/releases/latest' } })
+      : Response.json(release());
+  };
+  await store.request('https://api.github.com/repos/owner/old/releases/latest');
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].url, 'https://api.github.com/repos/owner/renamed/releases/latest');
+  store.fetchImpl = async () => new Response(null, { status: 301, headers: { Location: 'https://attacker.example/releases/latest' } });
+  await assert.rejects(store.request('https://api.github.com/repos/owner/old/releases/latest'), /Unexpected GitHub redirect/);
 });
 
 test('parallel checks download once and store an immutable verified package', async t => {
